@@ -1,6 +1,8 @@
+import { Routes, Route } from "react-router-dom";
 import ThemeToggle from "./components/ThemeToggle";
-import { useTheme } from "./useTheme";
+import { useTheme } from "./hooks/useTheme";
 import HomePage from "./pages/HomePage";
+import PoliticoPage from "./pages/PoliticoPage";
 
 function App() {
   const { theme, toggleTheme } = useTheme();
@@ -10,7 +12,10 @@ function App() {
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
       </div>
-      <HomePage theme={theme} />
+      <Routes>
+        <Route path="/" element={<HomePage theme={theme} />} />
+        <Route path="/:tipo/:nome" element={<PoliticoPage />} />
+      </Routes>
     </div>
   );
 }
