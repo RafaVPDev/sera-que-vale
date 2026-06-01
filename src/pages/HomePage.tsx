@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import TopDezGrafico from "../components/TopDezGrafico";
 import Autocomplete from "../components/Autocomplete";
 import { useSenadores } from "../hooks/useSenadores";
+import { useDeputados } from "../hooks/useDeputados";
 
 type Aba = "senadores" | "deputados";
 
@@ -16,13 +17,16 @@ function HomePage({ theme }: HomePageProps) {
   const [mostrarSugestoes, setMostrarSugestoes] = useState(false);
   const navigate = useNavigate();
   const { senadores } = useSenadores();
+  const { deputados } = useDeputados();
 
   const sugestoesFiltradas =
     abaAtiva === "senadores"
       ? senadores
           .filter((s) => s.nome.toLowerCase().includes(busca.toLowerCase()))
           .slice(0, 8)
-      : [];
+      : deputados
+          .filter((d) => d.nome.toLowerCase().includes(busca.toLowerCase()))
+          .slice(0, 8);
 
   function handleConsultar() {
     if (!busca.trim()) return;
