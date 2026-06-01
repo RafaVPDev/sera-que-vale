@@ -14,7 +14,7 @@ function App() {
       </div>
       <Routes>
         <Route path="/" element={<HomePage theme={theme} />} />
-        <Route path="/:tipo/:codigo/:nome" element={<PoliticoPage />} />
+        <Route path="/deputado/:codigo/:nome" element={<PoliticoPage />} />
       </Routes>
     </div>
   );

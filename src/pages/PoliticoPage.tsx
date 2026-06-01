@@ -1,11 +1,22 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import { useSenador } from "../hooks/useSenador";
+import { useGastosDeputado } from "../hooks/useGastosDeputado";
+import { useDeputado } from "../hooks/useDeputado";
+import Modal from "../components/Modal";
+
+type Periodo = "ano_atual" | "dois_anos" | "todos";
 
 function PoliticoPage() {
-  const { tipo, codigo, nome } = useParams();
+  const { codigo, nome } = useParams();
   const navigate = useNavigate();
-  const { senador, loading } = useSenador(tipo === "senador" ? codigo! : "");
+  const [periodo, setPeriodo] = useState<Periodo>("ano_atual");
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const { gastos, loading: loadingGastos } = useGastosDeputado(
+    codigo ?? "",
+    periodo,
+  );
+  const { deputado } = useDeputado(codigo ?? "");
 
   const nomeFormatado = nome
     ?.replace(/-/g, " ")
@@ -16,13 +27,13 @@ function PoliticoPage() {
     )
     .join(" ");
 
-  function calcularIdade(dataNascimento: string) {
-    const nascimento = new Date(dataNascimento);
-    const hoje = new Date();
-    return Math.floor(
-      (hoje.getTime() - nascimento.getTime()) / (1000 * 60 * 60 * 24 * 365),
-    );
-  }
+  const totalGasto = gastos.reduce((acc, g) => acc + g.valorLiquido, 0);
+
+  const periodos: { valor: Periodo; label: string }[] = [
+    { valor: "ano_atual", label: "2026" },
+    { valor: "dois_anos", label: "Últimos 2 anos" },
+    { valor: "todos", label: "Todos os mandatos" },
+  ];
 
   return (
     <div
@@ -65,10 +76,10 @@ function PoliticoPage() {
           alignItems: "center",
         }}
       >
-        {senador?.foto && (
+        {deputado?.foto && (
           <img
-            src={senador.foto}
-            alt={senador.nome}
+            src={deputado.foto}
+            alt={deputado.nome}
             style={{
               width: "100px",
               height: "100px",
@@ -87,7 +98,7 @@ function PoliticoPage() {
               marginBottom: "8px",
             }}
           >
-            {tipo === "senador" ? "Senador" : "Deputado"}
+            Deputado Federal
           </p>
           <h1
             style={{
@@ -96,7 +107,7 @@ function PoliticoPage() {
               fontWeight: "bold",
             }}
           >
-            {loading ? nomeFormatado : (senador?.nome ?? nomeFormatado)}
+            {deputado?.nome ?? nomeFormatado}
           </h1>
           <p
             style={{
@@ -105,11 +116,48 @@ function PoliticoPage() {
               marginTop: "8px",
             }}
           >
-            {loading
-              ? "Carregando..."
-              : `${senador?.partido} • ${senador?.uf} • ${calcularIdade(senador?.dataNascimento ?? "")} anos`}
+            {deputado
+              ? `${deputado.partido} • ${deputado.uf}`
+              : "Carregando..."}
           </p>
         </div>
+      </div>
+
+      <div style={{ display: "flex", gap: "0px" }}>
+        {periodos.map((p, i) => (
+          <button
+            key={p.valor}
+            onClick={() => {
+              if (p.valor === "todos") {
+                setMostrarModal(true);
+                return;
+              }
+              setPeriodo(p.valor);
+            }}
+            style={{
+              padding: "10px 20px",
+              border: "2px solid var(--border-color)",
+              borderRadius:
+                i === 0
+                  ? "8px 0 0 8px"
+                  : i === periodos.length - 1
+                    ? "0 8px 8px 0"
+                    : "0",
+              borderLeft:
+                i > 0
+                  ? "1px solid var(--border-color)"
+                  : "2px solid var(--border-color)",
+              background:
+                periodo === p.valor ? "var(--accent-color)" : "var(--bg-card)",
+              color: periodo === p.valor ? "#FFFFFF" : "var(--text-color)",
+              fontSize: "14px",
+              fontWeight: "bold",
+              cursor: "pointer",
+            }}
+          >
+            {p.label}
+          </button>
+        ))}
       </div>
 
       <div
@@ -120,9 +168,17 @@ function PoliticoPage() {
         }}
       >
         {[
-          { label: "Total Gasto", valor: "R$ 980.000" },
+          {
+            label: "Total Gasto",
+            valor: loadingGastos
+              ? "Carregando..."
+              : `R$ ${totalGasto.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`,
+          },
           { label: "Média Nacional", valor: "R$ 720.000" },
-          { label: "Acima da Média", valor: "+36%" },
+          {
+            label: "Registros",
+            valor: loadingGastos ? "..." : gastos.length.toString(),
+          },
         ].map((card) => (
           <div
             key={card.label}
@@ -167,8 +223,19 @@ function PoliticoPage() {
           opacity: 0.5,
         }}
       >
-        Gráficos e termômetro virão aqui
+        Gráficos virão aqui
       </div>
+
+      {mostrarModal && (
+        <Modal
+          mensagem="Buscar todos os mandatos pode demorar alguns minutos. Deseja continuar?"
+          onConfirmar={() => {
+            setPeriodo("todos");
+            setMostrarModal(false);
+          }}
+          onCancelar={() => setMostrarModal(false)}
+        />
+      )}
     </div>
   );
 }
