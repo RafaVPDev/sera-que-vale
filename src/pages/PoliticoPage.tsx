@@ -1,13 +1,28 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { useSenador } from "../hooks/useSenador";
 
 function PoliticoPage() {
-  const { tipo, nome } = useParams();
+  const { tipo, codigo, nome } = useParams();
   const navigate = useNavigate();
+  const { senador, loading } = useSenador(tipo === "senador" ? codigo! : "");
 
   const nomeFormatado = nome
     ?.replace(/-/g, " ")
-    .replace(/\b\w/g, (l) => l.toUpperCase());
+    .split(" ")
+    .map(
+      (palavra) =>
+        palavra.charAt(0).toUpperCase() + palavra.slice(1).toLowerCase(),
+    )
+    .join(" ");
+
+  function calcularIdade(dataNascimento: string) {
+    const nascimento = new Date(dataNascimento);
+    const hoje = new Date();
+    return Math.floor(
+      (hoje.getTime() - nascimento.getTime()) / (1000 * 60 * 60 * 24 * 365),
+    );
+  }
 
   return (
     <div
@@ -45,32 +60,56 @@ function PoliticoPage() {
           borderRadius: "12px",
           padding: "32px",
           borderLeft: "4px solid var(--accent-color)",
+          display: "flex",
+          gap: "24px",
+          alignItems: "center",
         }}
       >
-        <p
-          style={{
-            color: "var(--text-color)",
-            opacity: 0.6,
-            fontSize: "14px",
-            marginBottom: "8px",
-          }}
-        >
-          {tipo === "senador" ? "Senador" : "Deputado"}
-        </p>
-        <h1
-          style={{
-            color: "var(--title-color)",
-            fontSize: "32px",
-            fontWeight: "bold",
-          }}
-        >
-          {nomeFormatado}
-        </h1>
-        <p
-          style={{ color: "var(--text-color)", opacity: 0.6, marginTop: "8px" }}
-        >
-          Partido • Estado • X anos de mandato
-        </p>
+        {senador?.foto && (
+          <img
+            src={senador.foto}
+            alt={senador.nome}
+            style={{
+              width: "100px",
+              height: "100px",
+              borderRadius: "50%",
+              objectFit: "cover",
+              border: "3px solid var(--accent-color)",
+            }}
+          />
+        )}
+        <div>
+          <p
+            style={{
+              color: "var(--text-color)",
+              opacity: 0.6,
+              fontSize: "14px",
+              marginBottom: "8px",
+            }}
+          >
+            {tipo === "senador" ? "Senador" : "Deputado"}
+          </p>
+          <h1
+            style={{
+              color: "var(--title-color)",
+              fontSize: "32px",
+              fontWeight: "bold",
+            }}
+          >
+            {loading ? nomeFormatado : (senador?.nome ?? nomeFormatado)}
+          </h1>
+          <p
+            style={{
+              color: "var(--text-color)",
+              opacity: 0.6,
+              marginTop: "8px",
+            }}
+          >
+            {loading
+              ? "Carregando..."
+              : `${senador?.partido} • ${senador?.uf} • ${calcularIdade(senador?.dataNascimento ?? "")} anos`}
+          </p>
+        </div>
       </div>
 
       <div

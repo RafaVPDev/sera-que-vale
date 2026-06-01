@@ -30,17 +30,19 @@ function HomePage({ theme }: HomePageProps) {
 
   function handleConsultar() {
     if (!busca.trim()) return;
-    const nomeSlug = busca.trim().toLowerCase().replace(/\s+/g, "-");
+    const sugestao = sugestoesFiltradas[0];
+    if (!sugestao) return;
+    const nomeSlug = sugestao.nome.trim().toLowerCase().replace(/\s+/g, "-");
     const tipo = abaAtiva === "senadores" ? "senador" : "deputado";
-    navigate(`/${tipo}/${nomeSlug}`);
+    navigate(`/${tipo}/${sugestao.codigo}/${nomeSlug}`);
   }
 
-  function handleSelect(nome: string) {
+  function handleSelect(codigo: string, nome: string) {
     setBusca(nome);
     setMostrarSugestoes(false);
     const nomeSlug = nome.trim().toLowerCase().replace(/\s+/g, "-");
     const tipo = abaAtiva === "senadores" ? "senador" : "deputado";
-    navigate(`/${tipo}/${nomeSlug}`);
+    navigate(`/${tipo}/${codigo}/${nomeSlug}`);
   }
 
   return (

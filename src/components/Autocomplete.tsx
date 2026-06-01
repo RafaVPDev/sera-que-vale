@@ -1,7 +1,7 @@
 interface AutocompleteProps {
   sugestoes: { codigo: string; nome: string; partido: string; uf: string }[];
   busca: string;
-  onSelect: (nome: string) => void;
+  onSelect: (codigo: string, nome: string) => void;
 }
 
 function Autocomplete({ sugestoes, busca, onSelect }: AutocompleteProps) {
@@ -26,7 +26,7 @@ function Autocomplete({ sugestoes, busca, onSelect }: AutocompleteProps) {
       {sugestoes.map((s) => (
         <div
           key={s.codigo}
-          onClick={() => onSelect(s.nome)}
+          onClick={() => onSelect(s.codigo, s.nome)}
           style={{
             padding: "12px 16px",
             cursor: "pointer",
