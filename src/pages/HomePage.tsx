@@ -1,14 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import TopDezGrafico from "../components/TopDezGrafico";
+import { Search, FileText, TrendingUp } from "lucide-react";
 import Autocomplete from "../components/Autocomplete";
 import { useDeputados } from "../hooks/useDeputados";
+import ContadorGastos from "../components/ContadorGastos";
 
-interface HomePageProps {
-  theme: "light" | "dark";
-}
-
-function HomePage({ theme }: HomePageProps) {
+function HomePage() {
   const [busca, setBusca] = useState("");
   const [mostrarSugestoes, setMostrarSugestoes] = useState(false);
   const navigate = useNavigate();
@@ -33,37 +30,70 @@ function HomePage({ theme }: HomePageProps) {
     navigate(`/deputado/${codigo}/${nomeSlug}`);
   }
 
+  const cards = [
+    {
+      icon: <Search size={28} color="var(--accent-color)" />,
+      titulo: "513 Deputados",
+      descricao:
+        "Pesquise qualquer deputado federal em exercício e veja seus gastos detalhados",
+    },
+    {
+      icon: <FileText size={28} color="var(--accent-color)" />,
+      titulo: "Dados Oficiais",
+      descricao:
+        "Todas as informações vêm diretamente da API pública da Câmara dos Deputados",
+    },
+    {
+      icon: <TrendingUp size={28} color="var(--accent-color)" />,
+      titulo: "Análise Visual",
+      descricao:
+        "Gráficos de categorias e evolução temporal para entender como o dinheiro é gasto",
+    },
+  ];
+
   return (
     <div
       style={{
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        marginTop: "80px",
-        gap: "32px",
+        justifyContent: "center",
+        minHeight: "80vh",
+        gap: "40px",
       }}
     >
-      <h1
+      <div
         style={{
-          color: "var(--title-color)",
-          fontSize: "48px",
-          fontWeight: "bold",
-          textAlign: "center",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "16px",
         }}
       >
-        Será que Vale?
-      </h1>
+        <h1
+          style={{
+            color: "var(--title-color)",
+            fontSize: "56px",
+            fontWeight: "bold",
+            textAlign: "center",
+          }}
+        >
+          Será que Vale?
+        </h1>
 
-      <p
-        style={{
-          color: "var(--text-color)",
-          fontSize: "18px",
-          opacity: 0.7,
-          textAlign: "center",
-        }}
-      >
-        Consulte os gastos dos deputados federais brasileiros
-      </p>
+        <p
+          style={{
+            color: "var(--text-color)",
+            fontSize: "18px",
+            opacity: 0.7,
+            textAlign: "center",
+            maxWidth: "500px",
+          }}
+        >
+          Consulte os gastos dos deputados federais brasileiros com dinheiro
+          público
+        </p>
+      </div>
 
       <div style={{ position: "relative", width: "100%", maxWidth: "500px" }}>
         <div style={{ display: "flex", gap: "12px" }}>
@@ -114,8 +144,53 @@ function HomePage({ theme }: HomePageProps) {
           />
         )}
       </div>
-
-      <TopDezGrafico aba="deputados" theme={theme} />
+      <ContadorGastos />
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gap: "20px",
+          width: "100%",
+          maxWidth: "800px",
+          marginTop: "8px",
+        }}
+      >
+        {cards.map((card) => (
+          <div
+            key={card.titulo}
+            style={{
+              background: "var(--bg-card)",
+              borderRadius: "12px",
+              padding: "28px 24px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px",
+              border: "1px solid var(--border-color)",
+            }}
+          >
+            {card.icon}
+            <p
+              style={{
+                color: "var(--title-color)",
+                fontSize: "16px",
+                fontWeight: "bold",
+              }}
+            >
+              {card.titulo}
+            </p>
+            <p
+              style={{
+                color: "var(--text-color)",
+                fontSize: "14px",
+                opacity: 0.7,
+                lineHeight: "1.5",
+              }}
+            >
+              {card.descricao}
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

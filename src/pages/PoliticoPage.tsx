@@ -1,13 +1,19 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { useGastosDeputado } from "../hooks/useGastosDeputado";
 import { useDeputado } from "../hooks/useDeputado";
 import Modal from "../components/Modal";
+import GraficoCategorias from "../components/GraficoCategorias";
+import GraficoTemporal from "../components/GraficoTemporal";
 
 type Periodo = "ano_atual" | "dois_anos" | "todos";
 
-function PoliticoPage() {
+interface PoliticoPageProps {
+  theme: "light" | "dark";
+}
+
+function PoliticoPage({ theme }: PoliticoPageProps) {
   const { codigo, nome } = useParams();
   const navigate = useNavigate();
   const [periodo, setPeriodo] = useState<Periodo>("ano_atual");
@@ -28,6 +34,19 @@ function PoliticoPage() {
     .join(" ");
 
   const totalGasto = gastos.reduce((acc, g) => acc + g.valorLiquido, 0);
+
+  const mesMaisCaro = useMemo(() => {
+    if (gastos.length === 0) return "...";
+    const porMes = gastos.reduce(
+      (acc, g) => {
+        const chave = `${String(g.mes).padStart(2, "0")}/${g.ano}`;
+        acc[chave] = (acc[chave] || 0) + g.valorLiquido;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
+    return Object.entries(porMes).sort((a, b) => b[1] - a[1])[0][0];
+  }, [gastos]);
 
   const periodos: { valor: Periodo; label: string }[] = [
     { valor: "ano_atual", label: "2026" },
@@ -117,7 +136,7 @@ function PoliticoPage() {
             }}
           >
             {deputado
-              ? `${deputado.partido} • ${deputado.uf}`
+              ? `${deputado.partido} • ${deputado.uf} • ${deputado.legislatura}ª Legislatura (${2019 + (deputado.legislatura - 56) * 4}-${2023 + (deputado.legislatura - 56) * 4})`
               : "Carregando..."}
           </p>
         </div>
@@ -174,7 +193,10 @@ function PoliticoPage() {
               ? "Carregando..."
               : `R$ ${totalGasto.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`,
           },
-          { label: "Média Nacional", valor: "R$ 720.000" },
+          {
+            label: "Mês Mais Caro",
+            valor: loadingGastos ? "..." : mesMaisCaro,
+          },
           {
             label: "Registros",
             valor: loadingGastos ? "..." : gastos.length.toString(),
@@ -202,7 +224,7 @@ function PoliticoPage() {
             <p
               style={{
                 color: "var(--title-color)",
-                fontSize: "24px",
+                fontSize: "20px",
                 fontWeight: "bold",
                 marginTop: "8px",
               }}
@@ -213,18 +235,13 @@ function PoliticoPage() {
         ))}
       </div>
 
-      <div
-        style={{
-          background: "var(--bg-card)",
-          borderRadius: "12px",
-          padding: "24px",
-          textAlign: "center",
-          color: "var(--text-color)",
-          opacity: 0.5,
-        }}
-      >
-        Gráficos virão aqui
-      </div>
+      {!loadingGastos && gastos.length > 0 && (
+        <GraficoCategorias gastos={gastos} theme={theme} />
+      )}
+
+      {!loadingGastos && gastos.length > 0 && (
+        <GraficoTemporal gastos={gastos} theme={theme} />
+      )}
 
       {mostrarModal && (
         <Modal

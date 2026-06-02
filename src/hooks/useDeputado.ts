@@ -5,6 +5,7 @@ interface DeputadoDetalhe {
   partido: string;
   uf: string;
   foto: string;
+  legislatura: number;
 }
 
 export function useDeputado(codigo: string): {
@@ -23,6 +24,7 @@ export function useDeputado(codigo: string): {
       partido: encontrado.partido,
       uf: encontrado.uf,
       foto: encontrado.foto,
+      legislatura: 57,
     },
     loading,
   };
