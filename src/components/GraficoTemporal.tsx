@@ -100,7 +100,8 @@ function GraficoTemporal({ gastos, theme }: GraficoTemporalProps) {
       },
       tooltip: {
         callbacks: {
-          label: (ctx: { parsed: { y: number } }) =>
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          label: (ctx: any) =>
             `R$ ${ctx.parsed.y.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`,
         },
       },
