@@ -22,7 +22,7 @@ export function useDeputados() {
 
   useEffect(() => {
     fetch(
-      "https://dadosabertos.camara.leg.br/api/v2/deputados?itens=513&ordem=ASC&ordenarPor=nome",
+      "/api/camara/deputados?itens=513&ordem=ASC&ordenarPor=nome",
       {
         headers: { Accept: "application/json" },
       },

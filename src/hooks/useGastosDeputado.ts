@@ -36,7 +36,7 @@ export function useGastosDeputado(codigo: string, periodo: Periodo) {
 
         while (true) {
           const res = await fetch(
-            `https://dadosabertos.camara.leg.br/api/v2/deputados/${codigo}/despesas?ano=${ano}&pagina=${pagina}&itens=100`,
+            `/api/camara/deputados/${codigo}/despesas?ano=${ano}&pagina=${pagina}&itens=100`,
             { headers: { Accept: "application/json" } },
           );
           const data = await res.json();
