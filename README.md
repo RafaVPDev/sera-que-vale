@@ -51,5 +51,3 @@ npm install
 # Rode o projeto
 npm run dev
 ```
-
-Acesse `http://localhost:5173`
