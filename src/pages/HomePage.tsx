@@ -71,6 +71,7 @@ function HomePage() {
         }}
       >
         <h1
+          className="titulo-principal"
           style={{
             color: "var(--title-color)",
             fontSize: "56px",
@@ -146,6 +147,7 @@ function HomePage() {
       </div>
       <ContadorGastos />
       <div
+        className="grid-cards"
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(3, 1fr)",

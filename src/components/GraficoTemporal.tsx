@@ -90,6 +90,7 @@ function GraficoTemporal({ gastos, theme }: GraficoTemporalProps) {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
       title: {
@@ -108,7 +109,12 @@ function GraficoTemporal({ gastos, theme }: GraficoTemporalProps) {
     },
     scales: {
       x: {
-        ticks: { color: textColor, font: { size: 11 } },
+        ticks: {
+          color: textColor,
+          font: { size: 11 },
+          maxRotation: 45,
+          minRotation: 45,
+        },
         grid: { color: gridColor },
       },
       y: {
@@ -125,10 +131,12 @@ function GraficoTemporal({ gastos, theme }: GraficoTemporalProps) {
 
   return (
     <div
+      className="grafico-container"
       style={{
         background: "var(--bg-card)",
         borderRadius: "12px",
         padding: "24px",
+        height: "300px",
       }}
     >
       <Line data={data} options={options} />

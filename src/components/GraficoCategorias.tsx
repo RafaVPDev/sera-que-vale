@@ -67,10 +67,9 @@ function GraficoCategorias({ gastos, theme }: GraficoCategoriaProps) {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     indexAxis: "y" as const,
-    layout: {
-      padding: { left: 10 },
-    },
+    layout: { padding: { left: 10 } },
     plugins: {
       legend: { display: false },
       title: {
@@ -112,10 +111,12 @@ function GraficoCategorias({ gastos, theme }: GraficoCategoriaProps) {
 
   return (
     <div
+      className="grafico-container"
       style={{
         background: "var(--bg-card)",
         borderRadius: "12px",
         padding: "24px 24px 24px 40px",
+        height: "350px",
       }}
     >
       <Bar data={data} options={options} />

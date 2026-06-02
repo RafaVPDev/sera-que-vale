@@ -54,3 +54,33 @@ body {
   background-size: 400% 400%;
   animation: gradientMove 8s ease infinite;
 }
+
+@media (max-width: 768px) {
+  .grid-cards {
+    grid-template-columns: 1fr !important;
+  }
+
+  .grid-resumo {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .titulo-principal {
+    font-size: 36px !important;
+  }
+
+  .titulo-deputado {
+    font-size: 22px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-resumo {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .grafico-container {
+    height: 300px !important;
+  }
+}

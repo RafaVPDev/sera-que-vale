@@ -120,6 +120,7 @@ function PoliticoPage({ theme }: PoliticoPageProps) {
             Deputado Federal
           </p>
           <h1
+            className="titulo-deputado"
             style={{
               color: "var(--title-color)",
               fontSize: "32px",
@@ -180,6 +181,7 @@ function PoliticoPage({ theme }: PoliticoPageProps) {
       </div>
 
       <div
+        className="grid-cards"
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(3, 1fr)",
